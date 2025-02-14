@@ -23,14 +23,14 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @ApiBearerAuth("authorization")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ManagerGuard)
   @Post()
   async createMovie(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
     return this.moviesService.createMovie(createMovieDto);
   }
 
   @ApiBearerAuth("authorization")
-  @UseGuards(AuthGuard, ManagerGuard)
+  @UseGuards(AuthGuard)
   @Get()
   async getMovies(@Query() getMoviesDto: GetMoviesDto): Promise<Movie[]> {
     return this.moviesService.getMovies(getMoviesDto);
@@ -44,7 +44,7 @@ export class MoviesController {
   }
 
   @ApiBearerAuth("authorization")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ManagerGuard)
   @Put(":id")
   async updateMovie(
     @Param("id") id: string,
@@ -54,7 +54,7 @@ export class MoviesController {
   }
 
   @ApiBearerAuth("authorization")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ManagerGuard)
   @Delete(":id")
   async deleteMovie(@Param("id") id: string): Promise<void> {
     await this.moviesService.deleteMovie(id);
