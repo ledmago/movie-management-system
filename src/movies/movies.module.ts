@@ -9,19 +9,19 @@ import { AuthenticationService } from "src/authentication/authentication.service
 import { UsersService } from "src/users/users.service";
 import { Logger } from "@nestjs/common";
 import { RedisService } from "src/redis/redis.service";
+import { UsersRepository } from "src/users/users.repository";
+import { UsersModule } from "src/users/users.module";
+import { AuthenticationModule } from "src/authentication/authentication.module";
 @Module({
   imports: [
+    UsersModule,
+    AuthenticationModule,
     MongooseModule.forFeature([{ name: Movie.name, schema: MovieSchema }]),
   ],
   controllers: [MoviesController],
   providers: [
     MoviesService,
     MoviesRepository,
-    JwtService,
-    AuthenticationService,
-    JwtService,
-    Logger,
-    RedisService,
   ],
   exports: [MoviesService]
 })

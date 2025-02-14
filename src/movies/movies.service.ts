@@ -8,10 +8,12 @@ import { GetMoviesDto } from "./dto/get-movies.dto";
 import * as Exceptions from "./movies.exceptions";
 import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { DeleteMovieResponseDto } from "./dto/delete-movie.dto";
-
+import { UsersService } from "src/users/users.service";
 @Injectable()
 export class MoviesService {
-  constructor(private readonly moviesRepository: MoviesRepository) {}
+  constructor(
+    private readonly moviesRepository: MoviesRepository,
+  ) {}
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
     return this.moviesRepository.create(createMovieDto);

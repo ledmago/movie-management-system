@@ -11,11 +11,11 @@ export class AuthenticationService {
 
   generateToken({ user }): { accessToken: string; refreshToken: string } {
     const accessToken = this.jwtService.sign(
-      { id: user._id, username: user.username } as JwtPayload,
+      { id: user._id, username: user.username },
       { expiresIn: "30m" }
     );
     const refreshToken = this.jwtService.sign(
-      { id: user._id, username: user.username } as JwtPayload,
+      { id: user._id, username: user.username },
       { expiresIn: "3d" }
     );
     return {

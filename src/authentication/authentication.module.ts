@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 import { AuthenticationService } from "./authentication.service";
 import { RedisService } from "src/redis/redis.service";
 import { Logger } from "@nestjs/common";
@@ -8,16 +8,21 @@ import { Logger } from "@nestjs/common";
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>("privateKey"),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const secret = configService.get<string>("privateKey");
+        if (!secret) {
+          throw new Error("JWT secret key not found");
+        }
+        return {
+          secret,
+        };
+      },
       inject: [ConfigService],
     }),
   ],
   providers: [
     AuthenticationService,
     RedisService,
-    JwtService,
     Logger,
   ],
   exports: [JwtModule, AuthenticationService],
