@@ -29,6 +29,17 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Api Documentation of movie management system')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'Bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'JWT token giriniz',
+        in: 'header',
+      },
+      'authorization',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('documentation', app, documentFactory);
