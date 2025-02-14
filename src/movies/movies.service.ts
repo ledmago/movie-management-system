@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Movie, MovieDocument } from "./movies.schema";
+import { Movie, MovieDocument, Session } from "./movies.schema";
 import { CreateMovieDto } from "./dto/create-movie.dto";
 import { MoviesRepository } from "./movies.repository";
 import { GetMoviesDto } from "./dto/get-movies.dto";
@@ -86,6 +86,22 @@ export class MoviesService {
     await this.moviesRepository.delete(id);
     return {
       message: "Film başarıyla silindi",
+    };
+  }
+
+  async getMovieAndSessionById(movieId: string, movieSessionId: string): Promise<{
+    movie: Movie,
+    movieSession: Session | undefined
+  }> {
+    const movie = await this.moviesRepository.findMovieAndSessionById({ movieId, movieSessionId });
+    if (!movie) {
+      throw Exceptions.MovieOrSessionNotFound();
+    }
+    const movieSession = movie.sessions.find((session: Session) => session?._id?.toString() === movieSessionId);
+
+    return {
+      movie,
+      movieSession,
     };
   }
 }

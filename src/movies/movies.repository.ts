@@ -90,4 +90,8 @@ export class MoviesRepository {
       };
     return this.movieModel.find(query).skip(skip).limit(limit).lean().exec();
   }
+
+  async findMovieAndSessionById({ movieId, movieSessionId }: { movieId: string, movieSessionId: string }): Promise<Movie | null> {
+    return this.movieModel.findOne({ _id: movieId, "sessions._id": movieSessionId }).lean().exec();
+  }
 }

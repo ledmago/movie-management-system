@@ -10,8 +10,7 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationService } from './authentication/authentication.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { MoviesModule } from './movies/movies.module';
-import { TicketController } from './ticket/ticket.controller';
-import { TicketService } from './ticket/ticket.service';
+import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
   imports: [
@@ -25,8 +24,9 @@ import { TicketService } from './ticket/ticket.service';
     RedisModule,
     UsersModule,
     MoviesModule,
+    TicketsModule,
   ],
-  controllers: [AppController, TicketController],
-  providers: [AppService, AuthenticationService, TicketService],
+  controllers: [AppController],
+  providers: [AppService, AuthenticationService],
 })
 export class AppModule {}

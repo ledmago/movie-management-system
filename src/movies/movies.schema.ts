@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 import { TimeSlot } from './movies.constants';
 
 @Schema({ timestamps: true })
-class Session {
+export class Session {
   @Prop({ required: true, type: Date })
   startDate: Date;
 
@@ -11,6 +11,8 @@ class Session {
   endDate: Date;
   @Prop({ required: true, min: 1 })
   roomNumber: number;
+
+  _id?: ObjectId;
 }
 
 const SessionSchema = SchemaFactory.createForClass(Session);
@@ -25,6 +27,8 @@ export class Movie {
 
   @Prop({ type: [SessionSchema], default: [] })
   sessions: Session[];
+
+  _id?: ObjectId;
 }
 
 export type MovieDocument = Movie & Document;
