@@ -19,9 +19,7 @@ export class TicketsService {
     const { movieId, movieSessionId, seatNumber, price } = buyTicketDto;
     const { movie, movieSession } =
       await this.moviesService.getMovieAndSessionById(movieId, movieSessionId);
-    console.log(movie, {
-      userId: user._id,
-    });
+
     return this.ticketsRepository.create({
       movieId: movie._id,
       movieSessionId: movieSession?._id,
