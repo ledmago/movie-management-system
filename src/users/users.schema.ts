@@ -12,14 +12,17 @@ export class User {
   @Prop({ required: true, })
   hash: string;
 
-  @Prop({ required: false, })
-  secret: string;
-
   @Prop({type: Boolean, default: true, required: false, })
   isActive: boolean;
 
   @Prop({ type: String, enum: UserRole, required: true })
   role: UserRole;
+
+  @Prop({ required: false, })
+  firstName: string;
+
+  @Prop({ required: false, })
+  lastName: string;
 }
 
 

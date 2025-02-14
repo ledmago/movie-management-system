@@ -13,6 +13,10 @@ export class UsersRepository{
 
   async findByUsername({ username }: {username: string}): Promise<UserDocument | null> {
     return this.userModel.findOne({username}).lean().exec();
-    
+  }
+
+  async create(user: Partial<User>): Promise<UserDocument> {
+    const createdUser = await this.userModel.create(user);
+    return createdUser.toObject();
   }
 }

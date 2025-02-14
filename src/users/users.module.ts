@@ -6,7 +6,6 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import { UsersRepository } from './users.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users.schema';
-import { JwtService } from '@nestjs/jwt';
 import { RedisModule } from '../redis/redis.module';
 
 @Module({

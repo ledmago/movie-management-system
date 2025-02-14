@@ -2,6 +2,8 @@ import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
 import { UserLoginRequestDto, UserLoginResponseDto } from './dto/login-request.dto';
 import { UsersService } from './users.service';
 import { ApiResponse } from '@nestjs/swagger';
+import { UserRegisterResponseDto } from './dto/register-request.dto';
+import { UserRegisterRequestDto } from './dto/register-request.dto';
 
 
 @Controller('users')
@@ -17,7 +19,17 @@ export class UsersController {
   login(@Body() userLoginRequestDto: UserLoginRequestDto): Promise<UserLoginResponseDto> {
     return this.userService.login(userLoginRequestDto);
   }
-  
+
+  @Post('/auth/register')
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Register user successfully',
+    type: UserLoginResponseDto,
+  })
+  register(@Body() user: UserRegisterRequestDto): Promise<UserRegisterResponseDto> {
+    return this.userService.register(user);
+  }
+
   @Get('/me')
   getCurrentUser(@Body() userLoginRequestDto: UserLoginRequestDto): Promise<any> {
     return this.userService.login(userLoginRequestDto);

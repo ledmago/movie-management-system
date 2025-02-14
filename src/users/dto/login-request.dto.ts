@@ -19,12 +19,6 @@ export class UserLoginRequestDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @ApiProperty({
-    description: "ga code"
-  })
-  @IsString()
-  gaCode?: string;
 }
 
 export class UserLoginResponseDto {
