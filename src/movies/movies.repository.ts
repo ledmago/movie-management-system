@@ -88,7 +88,6 @@ export class MoviesRepository {
           },
         },
       };
-      console.log("query", JSON.stringify(query, null, 2))
     return this.movieModel.find(query).skip(skip).limit(limit).lean().exec();
   }
 }
