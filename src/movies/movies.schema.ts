@@ -2,15 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { TimeSlot } from './movies.constants';
 
-
-@Schema()
+@Schema({ timestamps: true })
 class Session {
   @Prop({ required: true, type: Date })
-  date: Date;
+  startDate: Date;
 
-  @Prop({ required: true, enum: TimeSlot })
-  timeSlot: TimeSlot;
-
+  @Prop({ required: true, type: Date })
+  endDate: Date;
   @Prop({ required: true, min: 1 })
   roomNumber: number;
 }

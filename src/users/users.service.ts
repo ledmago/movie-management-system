@@ -52,7 +52,7 @@ export class UsersService {
   async register(
     user: UserRegisterRequestDto
   ): Promise<UserRegisterResponseDto> {
-    const { username, password, firstName, lastName } = user;
+    const { username, password, firstName, lastName, age } = user;
 
     const existingUser = await this.usersRepository.findByUsername({
       username,
@@ -67,6 +67,7 @@ export class UsersService {
       lastName,
       isActive: true,
       role: UserRole.CUSTOMER,
+      age,
     });
 
     const { accessToken, refreshToken } =

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from "@nestjs/common";
 import { Movie } from "./movies.schema";
@@ -17,7 +18,8 @@ import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { AuthGuard } from "src/authentication/authentication.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ManagerGuard } from "src/auth/guards/manager.guard";
-
+import { Request } from 'express';
+import { RequestWithUser } from "src/users/user.constants";
 @Controller("movie")
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -32,8 +34,9 @@ export class MoviesController {
   @ApiBearerAuth("authorization")
   @UseGuards(AuthGuard)
   @Get()
-  async getMovies(@Query() getMoviesDto: GetMoviesDto): Promise<Movie[]> {
-    return this.moviesService.getMovies(getMoviesDto);
+  async getAvailableMovies(@Query() getMoviesDto: GetMoviesDto, @Req() req: RequestWithUser): Promise<Movie[]> {
+    const user = req.user;
+    return this.moviesService.getAvailableMovies(getMoviesDto, user);
   }
 
   @ApiBearerAuth("authorization")

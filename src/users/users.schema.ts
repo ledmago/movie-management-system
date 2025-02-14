@@ -18,11 +18,14 @@ export class User {
   @Prop({ type: String, enum: UserRole, required: true })
   role: UserRole;
 
-  @Prop({ required: false, })
+  @Prop({ required: true, })
   firstName: string;
 
-  @Prop({ required: false, })
+  @Prop({ required: true, })
   lastName: string;
+
+  @Prop({ required: true, })
+  age: number;
 }
 
 

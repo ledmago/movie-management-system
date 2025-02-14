@@ -9,20 +9,48 @@ import * as Exceptions from "./movies.exceptions";
 import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { DeleteMovieResponseDto } from "./dto/delete-movie.dto";
 import { UsersService } from "src/users/users.service";
+import { User } from "src/users/users.schema";
 @Injectable()
 export class MoviesService {
-  constructor(
-    private readonly moviesRepository: MoviesRepository,
-  ) {}
+  constructor(private readonly moviesRepository: MoviesRepository) {}
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
-    return this.moviesRepository.create(createMovieDto);
+    const formattedCreateMovieDto = {
+      ...createMovieDto,
+      sessions: createMovieDto.sessions.map(({timeSlot, date, ...session}) => {
+        const sessionAsDate = new Date(date);
+        const startHour = Number(timeSlot.split('-')[0].split(':')[0]);
+        const endHour = Number(timeSlot.split('-')[1].split(':')[0]);
+        const startDate = new Date(sessionAsDate.setHours(startHour, 0, 0, 0));
+        const endDate = new Date(sessionAsDate.setHours(endHour, 0, 0, 0));
+        return {
+          ...session,
+          startDate,
+          endDate
+        }
+      })
+    };
+    return this.moviesRepository.create(formattedCreateMovieDto);
   }
 
-  async getMovies(getMoviesDto: GetMoviesDto): Promise<Movie[]> {
-    const { page = 1, limit = 10 } = getMoviesDto;
+  async getAvailableMovies(
+    getMoviesDto: GetMoviesDto,
+    user: User
+  ): Promise<Movie[]> {
+
+    const { page = 1, limit = 50 } = getMoviesDto;
     const skip = (page - 1) * limit;
-    return this.moviesRepository.findAll(skip, limit);
+
+    const currentTime = new Date();
+
+
+    const movies = await this.moviesRepository.getAvailableMovies({
+      skip,
+      limit,
+      currentTime,
+      userAge: user.age,
+    });
+    return movies;
   }
 
   async getMovieById(id: string): Promise<Movie> {

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Movie, MovieDocument } from './movies.schema';
-import { UpdateMovieDto } from './dto/update-movie.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Movie, MovieDocument } from "./movies.schema";
+import { UpdateMovieDto } from "./dto/update-movie.dto";
 
 @Injectable()
 export class MoviesRepository {
@@ -23,15 +23,13 @@ export class MoviesRepository {
     return this.movieModel.find().skip(skip).limit(limit).lean().exec();
   }
 
-  async update(
-    {
-        id,
-        updateMovieDto
-    }: {
-        id: string,
-        updateMovieDto: UpdateMovieDto
-    }
-  ): Promise<MovieDocument | null> {
+  async update({
+    id,
+    updateMovieDto,
+  }: {
+    id: string;
+    updateMovieDto: UpdateMovieDto;
+  }): Promise<MovieDocument | null> {
     return this.movieModel
       .findByIdAndUpdate(id, updateMovieDto, { new: true })
       .lean()
@@ -48,16 +46,15 @@ export class MoviesRepository {
 
   async addSession(id: string, session: any): Promise<MovieDocument | null> {
     return this.movieModel
-      .findByIdAndUpdate(
-        id,
-        { $push: { sessions: session } },
-        { new: true }
-      )
+      .findByIdAndUpdate(id, { $push: { sessions: session } }, { new: true })
       .lean()
       .exec();
   }
 
-  async removeSession(movieId: string, sessionId: string): Promise<MovieDocument | null> {
+  async removeSession(
+    movieId: string,
+    sessionId: string
+  ): Promise<MovieDocument | null> {
     return this.movieModel
       .findByIdAndUpdate(
         movieId,
@@ -67,5 +64,31 @@ export class MoviesRepository {
       .lean()
       .exec();
   }
-  
+
+  async getAvailableMovies({
+    skip,
+    limit,
+    currentTime,
+    userAge,
+  }: {
+    userAge: number;
+    skip: number;
+    limit: number;
+    currentTime: Date;
+  }): Promise<MovieDocument[]> {
+    const query = {
+        ageRestriction: {
+            $lte: userAge
+        },
+        sessions: {
+          $elemMatch: {
+            startDate: {
+              $gte: currentTime,
+            },
+          },
+        },
+      };
+      console.log("query", JSON.stringify(query, null, 2))
+    return this.movieModel.find(query).skip(skip).limit(limit).lean().exec();
+  }
 }

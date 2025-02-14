@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEmail, MinLength, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, MinLength, Matches, IsNumber } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { FormattedUser } from '../user.formatter';
 
@@ -42,6 +42,14 @@ export class UserRegisterRequestDto {
   @IsString()
   @IsNotEmpty()
   lastName: string;
+
+  @ApiProperty({
+    description: "Age",
+    example: 20
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  age: number;
 }
 
 export class UserRegisterResponseDto {
