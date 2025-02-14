@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Movie, MovieSchema } from './movies.schema';
 import { MoviesController } from './movies.controller';
 import { MoviesService } from './movies.service';
-
+import { MoviesRepository } from './movies.repository';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -11,6 +11,6 @@ import { MoviesService } from './movies.service';
     ])
   ],
   controllers: [MoviesController],
-  providers: [MoviesService],
+  providers: [MoviesService, MoviesRepository],
 })
 export class MoviesModule {} 
