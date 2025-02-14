@@ -30,8 +30,7 @@ export class MoviesController {
   }
 
   @ApiBearerAuth("authorization")
-  @UseGuards(AuthGuard)
-//   @UseGuards(ManagerGuard)
+  @UseGuards(AuthGuard, ManagerGuard)
   @Get()
   async getMovies(@Query() getMoviesDto: GetMoviesDto): Promise<Movie[]> {
     return this.moviesService.getMovies(getMoviesDto);
