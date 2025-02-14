@@ -77,4 +77,19 @@ export class UsersService {
       user: UserFormatter.formatUser(newUser),
     };
   }
+
+    async verifyUserByToken(token: string): Promise<User> {
+      const payload = await this.authenticationService.verifyAsync(token);
+      if(!payload.id) {
+        throw Exceptions.UserNotFoundException();
+      }
+      const user = await this.usersRepository.findById(payload.id);
+      if (!user) {
+          throw Exceptions.UserNotFoundException();
+      }
+      if (!user.isActive) {
+          throw Exceptions.UserIsDeactive();
+      }
+      return user;
+  }
 }

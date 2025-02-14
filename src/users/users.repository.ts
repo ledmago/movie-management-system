@@ -19,4 +19,8 @@ export class UsersRepository{
     const createdUser = await this.userModel.create(user);
     return createdUser.toObject();
   }
+
+  async findById(id: string): Promise<UserDocument | null> {
+    return this.userModel.findById(id).lean().exec();
+  }
 }
