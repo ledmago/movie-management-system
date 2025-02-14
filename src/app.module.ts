@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationService } from './authentication/authentication.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { MoviesModule } from './movies/movies.module';
+import { TicketController } from './ticket/ticket.controller';
+import { TicketService } from './ticket/ticket.service';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { MoviesModule } from './movies/movies.module';
     UsersModule,
     MoviesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, AuthenticationService],
+  controllers: [AppController, TicketController],
+  providers: [AppService, AuthenticationService, TicketService],
 })
 export class AppModule {}
