@@ -15,7 +15,7 @@ import {
 } from "./dto/login-request.dto";
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { UsersRepository } from "./users.repository";
-import * as Exceptions from "src/common/exceptions";
+import * as Exceptions from "./users.exceptions";
 import { UserFormatter } from "./user.formatter";
 import { UserRegisterResponseDto } from "./dto/register-request.dto";
 import { UserRegisterRequestDto } from "./dto/register-request.dto";

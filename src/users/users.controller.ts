@@ -29,9 +29,4 @@ export class UsersController {
   register(@Body() user: UserRegisterRequestDto): Promise<UserRegisterResponseDto> {
     return this.userService.register(user);
   }
-
-  @Get('/me')
-  getCurrentUser(@Body() userLoginRequestDto: UserLoginRequestDto): Promise<any> {
-    return this.userService.login(userLoginRequestDto);
-  }
 }
