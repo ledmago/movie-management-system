@@ -22,7 +22,7 @@ export class BuyTicketDto {
   movieId: string;
 
   @ApiProperty({
-    description: "Film seansı ID",
+    description: "Movie seansı ID",
     example: "507f1f77bcf86cd799439011",
     type: String,
   })

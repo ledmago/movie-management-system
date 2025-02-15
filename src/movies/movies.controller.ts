@@ -20,6 +20,7 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 import { ManagerGuard } from "src/auth/guards/manager.guard";
 import { Request } from 'express';
 import { RequestWithUser } from "src/users/user.constants";
+import { WatchMovieBodyDto, WatchMovieIdParamDto, WatchMovieSessionIdParamDto } from "src/watchhistory/dto/watch-movie.dto";
 @Controller("movie")
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -61,5 +62,18 @@ export class MoviesController {
   @Delete(":id")
   async deleteMovie(@Param("id") id: string): Promise<void> {
     await this.moviesService.deleteMovie(id);
+  }
+
+  @ApiBearerAuth("authorization")
+  @UseGuards(AuthGuard)
+  @Post(":movieId/:movieSessionId/watch")
+  async watchMovie(
+    @Param() params: WatchMovieIdParamDto,
+    @Param() sessionParams: WatchMovieSessionIdParamDto,
+  @Body() watchMovieDto: WatchMovieBodyDto,
+    @Req() req: RequestWithUser
+  ): Promise<void> {
+    const user = req.user;
+    await this.moviesService.watchMovie({ movieId: params.movieId, movieSessionId: sessionParams.movieSessionId, watchMovieDto, user: req.user });
   }
 }

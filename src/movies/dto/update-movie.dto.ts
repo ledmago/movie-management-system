@@ -34,8 +34,8 @@ class UpdateSessionDto {
 
 export class UpdateMovieDto {
   @IsOptional()
-  @IsString({ message: "Film adı metin olmalıdır" })
-  @MaxLength(100, { message: "Film adı en fazla 100 karakter olabilir" })
+  @IsString({ message: "Movie adı metin olmalıdır" })
+  @MaxLength(100, { message: "Movie adı en fazla 100 karakter olabilir" })
   name?: string;
 
   @IsOptional()

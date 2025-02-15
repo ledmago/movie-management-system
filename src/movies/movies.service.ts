@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, forwardRef, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Movie, MovieDocument, Session } from "./movies.schema";
@@ -10,25 +10,35 @@ import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { DeleteMovieResponseDto } from "./dto/delete-movie.dto";
 import { UsersService } from "src/users/users.service";
 import { User } from "src/users/users.schema";
+import { WatchMovieBodyDto } from "src/watchhistory/dto/watch-movie.dto";
+import { TicketsService } from "src/tickets/tickets.service";
 @Injectable()
 export class MoviesService {
-  constructor(private readonly moviesRepository: MoviesRepository) {}
+  constructor(
+    private readonly moviesRepository: MoviesRepository,
+    @Inject(forwardRef(() => TicketsService))
+    private readonly ticketsService: TicketsService
+  ) {}
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
     const formattedCreateMovieDto = {
       ...createMovieDto,
-      sessions: createMovieDto.sessions.map(({timeSlot, date, ...session}) => {
-        const sessionAsDate = new Date(date);
-        const startHour = Number(timeSlot.split('-')[0].split(':')[0]);
-        const endHour = Number(timeSlot.split('-')[1].split(':')[0]);
-        const startDate = new Date(sessionAsDate.setHours(startHour, 0, 0, 0));
-        const endDate = new Date(sessionAsDate.setHours(endHour, 0, 0, 0));
-        return {
-          ...session,
-          startDate,
-          endDate
+      sessions: createMovieDto.sessions.map(
+        ({ timeSlot, date, ...session }) => {
+          const sessionAsDate = new Date(date);
+          const startHour = Number(timeSlot.split("-")[0].split(":")[0]);
+          const endHour = Number(timeSlot.split("-")[1].split(":")[0]);
+          const startDate = new Date(
+            sessionAsDate.setHours(startHour, 0, 0, 0)
+          );
+          const endDate = new Date(sessionAsDate.setHours(endHour, 0, 0, 0));
+          return {
+            ...session,
+            startDate,
+            endDate,
+          };
         }
-      })
+      ),
     };
     return this.moviesRepository.create(formattedCreateMovieDto);
   }
@@ -37,12 +47,10 @@ export class MoviesService {
     getMoviesDto: GetMoviesDto,
     user: User
   ): Promise<Movie[]> {
-
     const { page = 1, limit = 50 } = getMoviesDto;
     const skip = (page - 1) * limit;
 
     const currentTime = new Date();
-
 
     const movies = await this.moviesRepository.getAvailableMovies({
       skip,
@@ -85,23 +93,54 @@ export class MoviesService {
     }
     await this.moviesRepository.delete(id);
     return {
-      message: "Film başarıyla silindi",
+      message: "Movie başarıyla silindi",
     };
   }
 
-  async getMovieAndSessionById(movieId: string, movieSessionId: string): Promise<{
-    movie: Movie,
-    movieSession: Session | undefined
+  async getMovieAndSessionById(
+    movieId: string,
+    movieSessionId: string
+  ): Promise<{
+    movie: Movie;
+    movieSession: Session | undefined;
   }> {
-    const movie = await this.moviesRepository.findMovieAndSessionById({ movieId, movieSessionId });
+    const movie = await this.moviesRepository.findMovieAndSessionById({
+      movieId,
+      movieSessionId,
+    });
     if (!movie) {
       throw Exceptions.MovieOrSessionNotFound();
     }
-    const movieSession = movie.sessions.find((session: Session) => session?._id?.toString() === movieSessionId);
+    const movieSession = movie.sessions.find(
+      (session: Session) => session?._id?.toString() === movieSessionId
+    );
 
     return {
       movie,
       movieSession,
     };
+  }
+
+  async watchMovie({
+    movieId,
+    movieSessionId,
+    watchMovieDto,
+    user,
+  }: {
+    movieId: string;
+    movieSessionId: string;
+    watchMovieDto: WatchMovieBodyDto;
+    user: User;
+  }): Promise<void> {
+    const { ticketId } = watchMovieDto;
+    const { movie, movieSession } = await this.getMovieAndSessionById(
+      movieId,
+      movieSessionId
+    );
+
+    const ticket = await this.ticketsService.useTicket({
+      ticketId,
+      userId: user?._id?.toString() ?? "",
+    });
   }
 }

@@ -16,7 +16,7 @@ export class GetMoviesDto {
   page?: number = 1;
 
   @ApiProperty({
-    description: 'Sayfa başına gösterilecek film sayısı',
+    description: 'Sayfa başına gösterilecek Movie sayısı',
     required: false,
     default: 10,
     minimum: 1,

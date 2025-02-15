@@ -34,13 +34,13 @@ class SessionDto {
 
 export class CreateMovieDto {
   @ApiProperty({ 
-    description: 'Film adı',
+    description: 'Movie adı',
     maxLength: 100,
     example: 'Inception'
   })
-  @IsNotEmpty({ message: 'Film adı boş olamaz' })
-  @IsString({ message: 'Film adı metin olmalıdır' })
-  @MaxLength(100, { message: 'Film adı en fazla 100 karakter olabilir' })
+  @IsNotEmpty({ message: 'Movie adı boş olamaz' })
+  @IsString({ message: 'Movie adı metin olmalıdır' })
+  @MaxLength(100, { message: 'Movie adı en fazla 100 karakter olabilir' })
   name: string;
 
   @ApiProperty({ 
@@ -54,7 +54,7 @@ export class CreateMovieDto {
   ageRestriction: number;
 
   @ApiProperty({ 
-    description: 'Film seansları',
+    description: 'Movie seansları',
     type: [SessionDto],
     minItems: 1,
     maxItems: 10

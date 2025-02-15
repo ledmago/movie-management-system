@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Movie, MovieSchema } from "./movies.schema";
 import { MoviesController } from "./movies.controller";
@@ -12,17 +12,16 @@ import { RedisService } from "src/redis/redis.service";
 import { UsersRepository } from "src/users/users.repository";
 import { UsersModule } from "src/users/users.module";
 import { AuthenticationModule } from "src/authentication/authentication.module";
+import { TicketsModule } from "src/tickets/tickets.module";
 @Module({
   imports: [
+    MongooseModule.forFeature([{ name: 'Movie', schema: MovieSchema }]),
     UsersModule,
     AuthenticationModule,
-    MongooseModule.forFeature([{ name: Movie.name, schema: MovieSchema }]),
+    TicketsModule,
   ],
   controllers: [MoviesController],
-  providers: [
-    MoviesService,
-    MoviesRepository,
-  ],
-  exports: [MoviesService]
+  providers: [MoviesService, MoviesRepository],
+  exports: [MoviesService, MoviesRepository, MongooseModule],
 })
 export class MoviesModule {}
