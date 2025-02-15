@@ -13,6 +13,8 @@ import { User } from "src/users/users.schema";
 import { WatchMovieBodyDto } from "src/watchhistory/dto/watch-movie.dto";
 import { TicketsService } from "src/tickets/tickets.service";
 import { WatchHistoryService } from "src/watchhistory/watchhistory.service";
+import { WatchHistory } from "src/watchhistory/watchhistory.schema";
+import { Tickets } from "src/tickets/ticket.schema";
 @Injectable()
 export class MoviesService {
   constructor(
@@ -137,7 +139,7 @@ export class MoviesService {
     movieSessionId: string;
     watchMovieDto: WatchMovieBodyDto;
     user: User;
-  }): Promise<void> {
+  }): Promise<{ message: string; watchHistory: WatchHistory; ticket: Tickets | null }> {
     const { ticketId } = watchMovieDto;
     const { movie, movieSession } = await this.getMovieAndSessionById(
       movieId,
@@ -147,16 +149,21 @@ export class MoviesService {
     const ticket = await this.ticketsService.useTicket({
       movieId,
       movieSessionId,
-
       ticketId,
       userId: user?._id?.toString() ?? "",
     });
 
-    await this.WatchHistoryService.createWatchHistory({
+    const watchHistory = await this.WatchHistoryService.createWatchHistory({
       movieId,
       movieSessionId,
       userId: user?._id?.toString() ?? "",
       ticketId,
     });
+
+    return {
+      message: "Movie izlendi",
+      watchHistory,
+      ticket,
+    };
   }
 }
