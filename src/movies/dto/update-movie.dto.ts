@@ -23,7 +23,7 @@ class UpdateSessionDto {
   date?: Date;
 
   @IsOptional()
-  @IsEnum(TimeSlot, { message: "Geçersiz seans saati" })
+  @IsEnum(TimeSlot, { message: "Geçersiz session saati" })
   timeSlot?: TimeSlot;
 
   @IsOptional()
@@ -44,10 +44,10 @@ export class UpdateMovieDto {
   ageRestriction?: number;
 
   @IsOptional()
-  @IsArray({ message: "Seanslar dizi formatında olmalıdır" })
+  @IsArray({ message: "Sessionlar dizi formatında olmalıdır" })
   @ValidateNested({ each: true })
-  @ArrayMinSize(1, { message: "En az bir seans eklenmelidir" })
-  @ArrayMaxSize(10, { message: "En fazla 10 seans eklenebilir" })
+  @ArrayMinSize(1, { message: "En az bir session eklenmelidir" })
+  @ArrayMaxSize(10, { message: "En fazla 10 session eklenebilir" })
   @Type(() => UpdateSessionDto)
   sessions?: UpdateSessionDto[];
 }

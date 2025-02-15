@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { WatchHistoryRepository } from "./watchhistory.repository";
 import { WatchHistory } from "./watchhistory.schema";
-
+import { User } from "src/users/users.schema";
 @Injectable()
 export class WatchHistoryService {
   constructor(
@@ -26,5 +26,10 @@ export class WatchHistoryService {
       ticketId,
       watchDate: new Date(),
     });
+  }
+
+  async getWatchHistory(user: User): Promise<WatchHistory[]> {
+    console.log(user)
+    return this.watchHistoryRepository.findByUserId(user._id?.toString() ?? "");
   }
 }

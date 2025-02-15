@@ -5,7 +5,7 @@ import { TimeSlot } from '../movies.constants';
 
 class SessionDto {
   @ApiProperty({ 
-    description: 'Seans tarihi',
+    description: 'Session tarihi',
     example: '2024-03-20'
   })
   @IsNotEmpty({ message: 'Tarih boş olamaz' })
@@ -13,12 +13,12 @@ class SessionDto {
   date: Date;
 
   @ApiProperty({ 
-    description: 'Seans saati',
+    description: 'Session saati',
     enum: TimeSlot,
     example: TimeSlot.SLOT_10_12
   })
-  @IsNotEmpty({ message: 'Seans saati boş olamaz' })
-  @IsEnum(TimeSlot, { message: 'Geçersiz seans saati' })
+  @IsNotEmpty({ message: 'Session saati boş olamaz' })
+  @IsEnum(TimeSlot, { message: 'Geçersiz session saati' })
   timeSlot: TimeSlot;
 
   @ApiProperty({ 
@@ -54,15 +54,15 @@ export class CreateMovieDto {
   ageRestriction: number;
 
   @ApiProperty({ 
-    description: 'Movie seansları',
+    description: 'Movie sessionları',
     type: [SessionDto],
     minItems: 1,
     maxItems: 10
   })
-  @IsArray({ message: 'Seanslar dizi formatında olmalıdır' })
+  @IsArray({ message: 'Sessionlar dizi formatında olmalıdır' })
   @ValidateNested({ each: true })
-  @ArrayMinSize(1, { message: 'En az bir seans eklenmelidir' })
-  @ArrayMaxSize(10, { message: 'En fazla 10 seans eklenebilir' })
+  @ArrayMinSize(1, { message: 'En az bir session eklenmelidir' })
+  @ArrayMaxSize(10, { message: 'En fazla 10 session eklenebilir' })
   @Type(() => SessionDto)
   sessions: SessionDto[];
 }
