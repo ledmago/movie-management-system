@@ -22,6 +22,16 @@ export class TicketsService {
     const { movie, movieSession } =
       await this.moviesService.getMovieAndSessionById(movieId, movieSessionId);
 
+    const isSeatTaken =
+      await this.ticketsRepository.findByMovieSessionIdAndSeatNumber(
+        movieSessionId,
+        seatNumber.toString()
+      );
+
+    if (isSeatTaken) {
+      throw Exceptions.SeatAlreadyTaken();
+    }
+
     return this.ticketsRepository.create({
       movieId: movie._id,
       movieSessionId: movieSession?._id,
@@ -32,8 +42,17 @@ export class TicketsService {
     });
   }
 
-  validateTicket({ticket, userId, movieId, movieSessionId }: {ticket: Tickets, userId: string, movieId: string, movieSessionId: string}): boolean {
-
+  validateTicket({
+    ticket,
+    userId,
+    movieId,
+    movieSessionId,
+  }: {
+    ticket: Tickets;
+    userId: string;
+    movieId: string;
+    movieSessionId: string;
+  }): boolean {
     if (ticket.isUsed) {
       throw Exceptions.TicketAlreadyUsed();
     }
@@ -69,7 +88,7 @@ export class TicketsService {
       throw Exceptions.TicketNotFound();
     }
     this.validateTicket({ ticket, userId, movieId, movieSessionId });
-   
+
     const usedTicket = await this.ticketsRepository.useTicket(ticketId);
 
     return usedTicket;

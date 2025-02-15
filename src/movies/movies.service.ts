@@ -44,6 +44,11 @@ export class MoviesService {
         }
       ),
     };
+
+    const isRoomTaken = await this.moviesRepository.findByRoomAndSessionByTime(formattedCreateMovieDto.sessions);
+    if (isRoomTaken) {
+      throw Exceptions.RoomAlreadyTaken();
+    }
     return this.moviesRepository.create(formattedCreateMovieDto);
   }
 

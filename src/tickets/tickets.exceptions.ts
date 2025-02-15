@@ -5,3 +5,4 @@ export const TicketAlreadyUsed = () => new BadRequestException("Bilet zaten kull
 export const TicketIsNotValidForUser = () => new BadRequestException("Bu bilet kullanıcıya ait değildir")
 export const TicketIsNotValidForMovie = () => new BadRequestException("Bu bilet film için geçerli değildir")
 export const TicketIsNotValidForMovieSession = () => new BadRequestException("Bu bilet film seansı için geçerli değildir")
+export const SeatAlreadyTaken = () => new BadRequestException("Bu koltuk zaten dolu")

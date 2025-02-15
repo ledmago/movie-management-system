@@ -13,7 +13,7 @@ import {
       const ctx = host.switchToHttp();
       const response = ctx.getResponse<Response>();
       const status = exception.getStatus();
-  
+
       const errorResponse = {
         statusCode: status,
         status: 'fail',

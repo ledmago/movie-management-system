@@ -22,4 +22,8 @@ export class TicketsRepository{
   async useTicket(ticketId: string): Promise<TicketsDocument | null> {
     return this.ticketModel.findByIdAndUpdate(ticketId, { isUsed: true }, { new: true });
   }
+
+  async findByMovieSessionIdAndSeatNumber(movieSessionId: string, seatNumber: string): Promise<TicketsDocument | null> {
+    return this.ticketModel.findOne({ movieSessionId, seatNumber }).lean().exec();
+  }
 }

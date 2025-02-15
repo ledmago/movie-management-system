@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Movie, MovieDocument } from "./movies.schema";
+import { Movie, MovieDocument, Session } from "./movies.schema";
 import { UpdateMovieDto } from "./dto/update-movie.dto";
 
 @Injectable()
@@ -93,5 +93,30 @@ export class MoviesRepository {
 
   async findMovieAndSessionById({ movieId, movieSessionId }: { movieId: string, movieSessionId: string }): Promise<Movie | null> {
     return this.movieModel.findOne({ _id: movieId, "sessions._id": movieSessionId }).lean().exec();
+  }
+
+  async findByRoomAndSessionByTime(sessions: Session[]): Promise<MovieDocument | null> {
+    const query = {
+      sessions: {
+        $elemMatch: {
+          roomNumber: { $in: sessions.map(session => session.roomNumber) },
+          $or: [
+            {
+              startDate: { 
+                $lte: sessions[0].endDate,
+                $gte: sessions[0].startDate 
+              }
+            },
+            {
+              endDate: {
+                $lte: sessions[0].endDate,
+                $gte: sessions[0].startDate
+              }
+            }
+          ]
+        }
+      }
+    };
+    return this.movieModel.findOne(query).lean().exec();
   }
 }
