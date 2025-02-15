@@ -183,7 +183,7 @@ export class MoviesService {
     });
 
     return {
-      message: "Movie izlendi",
+      message: "success",
       watchHistory,
       ticket,
     };

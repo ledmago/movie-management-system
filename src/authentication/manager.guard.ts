@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { UserRole } from '../../users/user.constants';
-import * as UserExceptions from '../../users/users.exceptions';
+import { UserRole } from '../users/user.constants';
+import * as UserExceptions from '../users/users.exceptions';
 
 @Injectable()
 export class ManagerGuard implements CanActivate {

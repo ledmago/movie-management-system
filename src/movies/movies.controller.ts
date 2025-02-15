@@ -17,7 +17,7 @@ import { GetMoviesDto } from "./dto/get-movies.dto";
 import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { AuthGuard } from "src/authentication/authentication.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
-import { ManagerGuard } from "src/auth/guards/manager.guard";
+import { ManagerGuard } from "src/authentication/manager.guard";
 import { Request } from 'express';
 import { RequestWithUser } from "src/users/user.constants";
 import { WatchMovieBodyDto, WatchMovieIdParamDto, WatchMovieSessionIdParamDto } from "src/watchhistory/dto/watch-movie.dto";
