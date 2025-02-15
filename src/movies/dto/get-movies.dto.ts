@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetMoviesDto {
@@ -26,4 +26,20 @@ export class GetMoviesDto {
   @IsNumber({}, { message: 'Limit sayı olmalıdır' })
   @Min(1, { message: 'Limit en az 1 olmalıdır' })
   limit?: number = 10;
+
+  @ApiProperty({
+    description: 'Film adı',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiProperty({
+    description: 'Yaş sınırı',
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  ageRestriction?: number;
 }

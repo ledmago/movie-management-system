@@ -62,6 +62,8 @@ export class MoviesService {
     const currentTime = new Date();
 
     const movies = await this.moviesRepository.getAvailableMovies({
+      name: getMoviesDto.name,
+      ageRestriction: getMoviesDto.ageRestriction,
       skip,
       limit,
       currentTime,

@@ -70,16 +70,23 @@ export class MoviesRepository {
     limit,
     currentTime,
     userAge,
+    name,
+    ageRestriction,
   }: {
     userAge: number;
     skip: number;
     limit: number;
     currentTime: Date;
+    name?: string;
+    ageRestriction?: number;
   }): Promise<MovieDocument[]> {
     const query = {
+      ...(name && { name }),
+      ...(ageRestriction && {
         ageRestriction: {
-            $lte: userAge
+          $lte: ageRestriction,
         },
+      }),
         sessions: {
           $elemMatch: {
             startDate: {
