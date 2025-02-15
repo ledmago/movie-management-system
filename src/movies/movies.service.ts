@@ -1,6 +1,6 @@
 import { Inject, forwardRef, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, DeleteResult } from "mongoose";
 import { Movie, MovieDocument, Session } from "./movies.schema";
 import { CreateMovieDto } from "./dto/create-movie.dto";
 import { MoviesRepository } from "./movies.repository";
@@ -15,6 +15,7 @@ import { TicketsService } from "src/tickets/tickets.service";
 import { WatchHistoryService } from "src/watchhistory/watchhistory.service";
 import { WatchHistory } from "src/watchhistory/watchhistory.schema";
 import { Tickets } from "src/tickets/ticket.schema";
+import { DeleteBulkMovieDto } from "./dto/delete-bulk-movie";
 @Injectable()
 export class MoviesService {
   constructor(
@@ -194,5 +195,30 @@ export class MoviesService {
       watchHistory,
       ticket,
     };
+  }
+
+  async deleteBulkMovie(deleteBulkMovieDto: DeleteBulkMovieDto): Promise<DeleteResult> {
+    const { movieIds } = deleteBulkMovieDto;
+    const movies = await this.moviesRepository.deleteBulk(movieIds);
+    return movies;
+  }
+  
+  async createBulkMovie(createMovieDtos: CreateMovieDto[]): Promise<Movie[]> {
+    const session = await this.moviesRepository.startSession();
+    const createdMovies: Movie[] = [];
+    try {
+      session.startTransaction();
+      for (const createMovieDto of createMovieDtos) {
+        const movie = await this.createMovie(createMovieDto);
+        createdMovies.push(movie);
+      }
+      await session.commitTransaction();
+      return createdMovies;
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
   }
 }

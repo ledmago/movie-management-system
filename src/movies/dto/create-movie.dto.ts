@@ -66,3 +66,11 @@ export class CreateMovieDto {
   @Type(() => SessionDto)
   sessions: SessionDto[];
 }
+
+export class CreateBulkMovieDto {
+  @ApiProperty({
+    description: 'Filmler',
+    type: [CreateMovieDto],
+  })
+  movies: CreateMovieDto[];
+}

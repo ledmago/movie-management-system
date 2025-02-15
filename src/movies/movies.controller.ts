@@ -23,6 +23,9 @@ import { RequestWithUser } from "src/users/user.constants";
 import { WatchMovieBodyDto, WatchMovieIdParamDto, WatchMovieSessionIdParamDto } from "src/watchhistory/dto/watch-movie.dto";
 import { WatchHistory } from "src/watchhistory/watchhistory.schema";
 import { Tickets } from "src/tickets/ticket.schema";
+import { DeleteBulkMovieDto } from "./dto/delete-bulk-movie";
+import { DeleteResult } from "mongoose";
+import { CreateBulkMovieDto } from "./dto/create-movie.dto";
 @Controller("movie")
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -32,6 +35,20 @@ export class MoviesController {
   @Post()
   async createMovie(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
     return this.moviesService.createMovie(createMovieDto);
+  }
+
+  @ApiBearerAuth("authorization")
+  @UseGuards(AuthGuard, ManagerGuard)
+  @Post("bulk")
+  async createBulkMovie(@Body() createBulkMovieDto: CreateBulkMovieDto): Promise<Movie[]> {
+    return this.moviesService.createBulkMovie(createBulkMovieDto.movies);
+  }
+
+  @ApiBearerAuth("authorization")
+  @UseGuards(AuthGuard, ManagerGuard)
+  @Delete("bulk")
+  async deleteBulkMovie(@Body() deleteBulkMovieDto: DeleteBulkMovieDto): Promise<DeleteResult> {
+    return this.moviesService.deleteBulkMovie(deleteBulkMovieDto);
   }
 
   @ApiBearerAuth("authorization")
