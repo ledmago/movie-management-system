@@ -21,6 +21,7 @@ describe('MoviesService', () => {
     update: jest.fn(),
     delete: jest.fn(),
     findMovieAndSessionById: jest.fn(),
+    findByRoomAndSessionByTime: jest.fn(),
   };
 
   const mockTicketsService = {
@@ -29,6 +30,7 @@ describe('MoviesService', () => {
 
   const mockWatchHistoryService = {
     createWatchHistory: jest.fn(),
+    deleteWatchHistoryFromCache: jest.fn(),
   };
 
   beforeEach(async () => {

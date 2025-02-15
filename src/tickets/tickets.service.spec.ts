@@ -48,6 +48,7 @@ describe('TicketsService', () => {
       create: jest.fn(),
       findById: jest.fn(),
       useTicket: jest.fn(),
+      findByMovieSessionIdAndSeatNumber: jest.fn(),
     } as any;
 
     moviesService = {
@@ -77,6 +78,7 @@ describe('TicketsService', () => {
 
   describe('buyTicket', () => {
     it('should buy ticket sucessfully', async () => {
+      ticketsRepository.findByMovieSessionIdAndSeatNumber.mockResolvedValue(null);
       moviesService.getMovieAndSessionById.mockResolvedValue({
         movie: mockMovie as any,
         movieSession: mockMovie.sessions[0] as any

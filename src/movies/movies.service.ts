@@ -8,7 +8,6 @@ import { GetMoviesDto } from "./dto/get-movies.dto";
 import * as Exceptions from "./movies.exceptions";
 import { UpdateMovieDto } from "./dto/update-movie.dto";
 import { DeleteMovieResponseDto } from "./dto/delete-movie.dto";
-import { UsersService } from "src/users/users.service";
 import { User } from "src/users/users.schema";
 import { WatchMovieBodyDto } from "src/watchhistory/dto/watch-movie.dto";
 import { TicketsService } from "src/tickets/tickets.service";
@@ -190,8 +189,10 @@ export class MoviesService {
       ticketId,
     });
 
+    await this.WatchHistoryService.deleteWatchHistoryFromCache(user?._id?.toString() ?? "");
+
     return {
-      message: "success",
+      message: "success", 
       watchHistory,
       ticket,
     };

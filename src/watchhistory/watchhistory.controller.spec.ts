@@ -5,6 +5,7 @@ import { WatchHistoryRepository } from './watchhistory.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
+import { RedisService } from '../redis/redis.service';
 
 describe('WatchhistoryController', () => {
   let controller: WatchhistoryController;
@@ -45,6 +46,15 @@ describe('WatchhistoryController', () => {
           provide: UsersService,
           useValue: {
             findById: jest.fn(),
+          },
+        },
+        {
+          provide: RedisService,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            setWithTtl: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],

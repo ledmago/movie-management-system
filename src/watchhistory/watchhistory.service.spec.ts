@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WatchHistoryService } from './watchhistory.service';
 import { WatchHistoryRepository } from './watchhistory.repository';
+import { RedisService } from '../redis/redis.service';
 import { Types } from 'mongoose';
 
 describe('WatchHistoryService', () => {
   let service: WatchHistoryService;
   let watchHistoryRepository: jest.Mocked<WatchHistoryRepository>;
+  let redisService: jest.Mocked<RedisService>;
 
   const mockUser = {
     _id: new Types.ObjectId(),
-    email: 'test@test.com',
   };
 
   const mockWatchHistory = {
@@ -27,12 +28,23 @@ describe('WatchHistoryService', () => {
       findByUserId: jest.fn(),
     } as any;
 
+    redisService = {
+      get: jest.fn(),
+      set: jest.fn(),
+      setWithTtl: jest.fn(),
+      delete: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WatchHistoryService,
         {
           provide: WatchHistoryRepository,
           useValue: watchHistoryRepository,
+        },
+        {
+          provide: RedisService,
+          useValue: redisService,
         },
       ],
     }).compile();
@@ -68,18 +80,35 @@ describe('WatchHistoryService', () => {
   });
 
   describe('getWatchHistory', () => {
-    it('should get watch history successfully', async () => {
-      const mockWatchHistoryList = [{
+    it('should get watch history from cache', async () => {
+      const cachedHistory = [{
         ...mockWatchHistory,
-        save: jest.fn(),
-      }] as any;
-      
-      watchHistoryRepository.findByUserId.mockResolvedValue(mockWatchHistoryList);
+        _id: mockWatchHistory._id.toString(),
+        watchDate: mockWatchHistory.watchDate.toISOString(),
+      }];
+      redisService.get.mockResolvedValue(JSON.stringify(cachedHistory));
 
       const result = await service.getWatchHistory(mockUser as any);
 
-      expect(result).toEqual(mockWatchHistoryList);
+      expect(result).toEqual(cachedHistory);
+      expect(redisService.get).toHaveBeenCalledWith(`watchhistory:${mockUser._id}`);
+      expect(watchHistoryRepository.findByUserId).not.toHaveBeenCalled();
+    });
+
+    it('should get watch history from database', async () => {
+      redisService.get.mockResolvedValue(null);
+      const dbHistory = [mockWatchHistory];
+      watchHistoryRepository.findByUserId.mockResolvedValue(dbHistory as any);
+
+      const result = await service.getWatchHistory(mockUser as any);
+
+      expect(result).toEqual(dbHistory);
       expect(watchHistoryRepository.findByUserId).toHaveBeenCalledWith(mockUser._id.toString());
+      expect(redisService.setWithTtl).toHaveBeenCalledWith(
+        `watchhistory:${mockUser._id}`,
+        JSON.stringify(dbHistory),
+        3600
+      );
     });
 
     it('if user id is not found, query with empty string', async () => {
@@ -87,6 +116,15 @@ describe('WatchHistoryService', () => {
       await service.getWatchHistory(userWithoutId as any);
 
       expect(watchHistoryRepository.findByUserId).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('deleteWatchHistoryFromCache', () => {
+    it('should delete watch history from cache', async () => {
+      const userId = mockUser._id.toString();
+      await service.deleteWatchHistoryFromCache(userId);
+
+      expect(redisService.delete).toHaveBeenCalledWith(`watchhistory:${userId}`);
     });
   });
 });
