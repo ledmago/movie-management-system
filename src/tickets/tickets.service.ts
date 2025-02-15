@@ -32,7 +32,7 @@ export class TicketsService {
     });
   }
 
-  validateTicket({ticket, userId }: {ticket: Tickets, userId: string}): boolean {
+  validateTicket({ticket, userId, movieId, movieSessionId }: {ticket: Tickets, userId: string, movieId: string, movieSessionId: string}): boolean {
 
     if (ticket.isUsed) {
       throw Exceptions.TicketAlreadyUsed();
@@ -42,15 +42,33 @@ export class TicketsService {
       throw Exceptions.TicketIsNotValidForUser();
     }
 
+    if (ticket.movieId.toString() !== movieId) {
+      throw Exceptions.TicketIsNotValidForMovie();
+    }
+
+    if (ticket.movieSessionId.toString() !== movieSessionId) {
+      throw Exceptions.TicketIsNotValidForMovieSession();
+    }
+
     return true;
   }
 
-  async useTicket({ ticketId, userId }: { ticketId: string, userId: string }): Promise<Tickets | null> {
+  async useTicket({
+    movieId,
+    movieSessionId,
+    ticketId,
+    userId,
+  }: {
+    movieId: string;
+    movieSessionId: string;
+    ticketId: string;
+    userId: string;
+  }): Promise<Tickets | null> {
     const ticket = await this.ticketsRepository.findById(ticketId);
     if (!ticket) {
       throw Exceptions.TicketNotFound();
     }
-    this.validateTicket({ ticket, userId });
+    this.validateTicket({ ticket, userId, movieId, movieSessionId });
    
     const usedTicket = await this.ticketsRepository.useTicket(ticketId);
 

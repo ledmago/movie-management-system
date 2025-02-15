@@ -12,12 +12,14 @@ import { UsersService } from "src/users/users.service";
 import { User } from "src/users/users.schema";
 import { WatchMovieBodyDto } from "src/watchhistory/dto/watch-movie.dto";
 import { TicketsService } from "src/tickets/tickets.service";
+import { WatchHistoryService } from "src/watchhistory/watchhistory.service";
 @Injectable()
 export class MoviesService {
   constructor(
     private readonly moviesRepository: MoviesRepository,
     @Inject(forwardRef(() => TicketsService))
-    private readonly ticketsService: TicketsService
+    private readonly ticketsService: TicketsService,
+    private readonly WatchHistoryService: WatchHistoryService
   ) {}
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
@@ -109,11 +111,15 @@ export class MoviesService {
       movieSessionId,
     });
     if (!movie) {
-      throw Exceptions.MovieOrSessionNotFound();
+      throw Exceptions.MovieNotFound();
     }
     const movieSession = movie.sessions.find(
       (session: Session) => session?._id?.toString() === movieSessionId
     );
+
+    if (!movieSession) {
+      throw Exceptions.MovieSessionNotFound();
+    }
 
     return {
       movie,
@@ -139,8 +145,18 @@ export class MoviesService {
     );
 
     const ticket = await this.ticketsService.useTicket({
+      movieId,
+      movieSessionId,
+
       ticketId,
       userId: user?._id?.toString() ?? "",
+    });
+
+    await this.WatchHistoryService.createWatchHistory({
+      movieId,
+      movieSessionId,
+      userId: user?._id?.toString() ?? "",
+      ticketId,
     });
   }
 }

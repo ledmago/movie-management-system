@@ -9,12 +9,12 @@ import { Tickets } from "./ticket.schema";
 import { MoviesModule } from "src/movies/movies.module";
 import { JwtService } from "@nestjs/jwt";
 import { UsersModule } from "src/users/users.module";
-import { MoviesRepository } from "src/movies/movies.repository";
+import { WatchhistoryModule } from "src/watchhistory/watchhistory.module";
 @Module({
   imports: [
     UsersModule,
     forwardRef(() => MoviesModule),
-
+    WatchhistoryModule,
     MongooseModule.forFeature([{ name: Tickets.name, schema: TicketsSchema }]),
   ],
   controllers: [TicketsController],
@@ -23,8 +23,7 @@ import { MoviesRepository } from "src/movies/movies.repository";
     TicketsRepository,
     JwtService,
     MoviesService,
-    MoviesRepository,
-    Logger
+    Logger,
   ],
   exports: [TicketsService],
 })

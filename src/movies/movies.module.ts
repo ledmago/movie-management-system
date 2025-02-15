@@ -13,9 +13,13 @@ import { UsersRepository } from "src/users/users.repository";
 import { UsersModule } from "src/users/users.module";
 import { AuthenticationModule } from "src/authentication/authentication.module";
 import { TicketsModule } from "src/tickets/tickets.module";
+import { WatchhistoryModule } from "src/watchhistory/watchhistory.module";
+import { WatchHistoryService } from "src/watchhistory/watchhistory.service";
+import { WatchHistoryRepository } from "src/watchhistory/watchhistory.repository";
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Movie', schema: MovieSchema }]),
+    forwardRef(() => WatchhistoryModule),
     UsersModule,
     AuthenticationModule,
     TicketsModule,

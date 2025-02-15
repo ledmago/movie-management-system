@@ -4,16 +4,16 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 @Schema({ timestamps: true })
 export class WatchHistory {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Movie', required: true })
-  movieId: MongooseSchema.Types.ObjectId;
+  movieId: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'MovieSession', required: true })
-  movieSessionId: MongooseSchema.Types.ObjectId;
+  movieSessionId: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  userId: MongooseSchema.Types.ObjectId;
+  userId:string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Tickets', required: true })
-  ticketId: MongooseSchema.Types.ObjectId;
+  ticketId: string;
 
   @Prop({ required: true })
   watchDate: Date;
