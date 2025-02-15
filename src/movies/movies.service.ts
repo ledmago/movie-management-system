@@ -129,6 +129,22 @@ export class MoviesService {
     };
   }
 
+  validateMovieSession(movieSession: Session): void {
+   const endDate = new Date(movieSession.endDate);
+   const currentDate = new Date();
+   if (endDate < currentDate) {
+    throw Exceptions.MovieSessionExpired();
+   }
+
+   const startDate = new Date(movieSession.startDate);
+   const timeDifference = startDate.getTime() - currentDate.getTime();
+   const hourDifference = timeDifference / (1000 * 60 * 60);
+
+   if (hourDifference > 1) {
+    throw Exceptions.MovieSessionStartsInMoreThanOneHour();
+   }
+  }
+
   async watchMovie({
     movieId,
     movieSessionId,
@@ -145,6 +161,12 @@ export class MoviesService {
       movieId,
       movieSessionId
     );
+
+    if (!movieSession) {
+      throw Exceptions.MovieSessionNotFound();
+    }
+
+    this.validateMovieSession(movieSession);
 
     const ticket = await this.ticketsService.useTicket({
       movieId,

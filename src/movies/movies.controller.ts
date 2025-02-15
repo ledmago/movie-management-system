@@ -21,6 +21,8 @@ import { ManagerGuard } from "src/auth/guards/manager.guard";
 import { Request } from 'express';
 import { RequestWithUser } from "src/users/user.constants";
 import { WatchMovieBodyDto, WatchMovieIdParamDto, WatchMovieSessionIdParamDto } from "src/watchhistory/dto/watch-movie.dto";
+import { WatchHistory } from "src/watchhistory/watchhistory.schema";
+import { Tickets } from "src/tickets/ticket.schema";
 @Controller("movie")
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -72,8 +74,8 @@ export class MoviesController {
     @Param() sessionParams: WatchMovieSessionIdParamDto,
   @Body() watchMovieDto: WatchMovieBodyDto,
     @Req() req: RequestWithUser
-  ): Promise<void> {
+  ): Promise<{ message: string; watchHistory: WatchHistory; ticket: Tickets | null }> {
     const user = req.user;
-    await this.moviesService.watchMovie({ movieId: params.movieId, movieSessionId: sessionParams.movieSessionId, watchMovieDto, user: req.user });
+    return this.moviesService.watchMovie({ movieId: params.movieId, movieSessionId: sessionParams.movieSessionId, watchMovieDto, user: req.user });
   }
 }
