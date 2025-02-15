@@ -13,7 +13,6 @@ export class WatchhistoryController {
   @Get()
   async getWatchHistory(@Req() req: RequestWithUser): Promise<WatchHistory[]> {
     const user = req.user;
-    console.log(user);
     return this.watchHistoryService.getWatchHistory(user);
   }
 }
