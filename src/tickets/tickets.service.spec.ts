@@ -26,6 +26,17 @@ describe('TicketsService', () => {
 
   const mockMovie = {
     _id: mockTicket.movieId,
+    name: 'Test Movie',
+    ageRestriction: 13,
+    sessions: [
+      {
+        _id: new Types.ObjectId(),
+        startDate: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
+        endDate: new Date(Date.now() + 120 * 60 * 1000),  // 2 hours from now
+        roomNumber: 1,
+      },
+    ],
+
   };
 
   const mockMovieSession = {
@@ -65,18 +76,18 @@ describe('TicketsService', () => {
   });
 
   describe('buyTicket', () => {
-    it('başarılı bir şekilde bilet satın almalı', async () => {
+    it('should buy ticket sucessfully', async () => {
       moviesService.getMovieAndSessionById.mockResolvedValue({
-        movie: mockMovie,
-        movieSession: mockMovieSession,
+        movie: mockMovie as any,
+        movieSession: mockMovie.sessions[0] as any
       });
-      ticketsRepository.create.mockResolvedValue(mockTicket);
+      ticketsRepository.create.mockResolvedValue(mockTicket as any);
 
       const result = await service.buyTicket(
         {
           movieId: mockMovie._id.toString(),
           movieSessionId: mockMovieSession._id.toString(),
-          seatNumber: 'A1',
+          seatNumber: 2,
           price: 100,
         },
         mockUser as any
@@ -87,9 +98,9 @@ describe('TicketsService', () => {
   });
 
   describe('validateTicket', () => {
-    it('geçerli bir bileti doğrulamalı', () => {
+    it('should validate a valid ticket', () => {
       const result = service.validateTicket({
-        ticket: mockTicket,
+        ticket: mockTicket as any,
         userId: mockTicket.userId.toString(),
         movieId: mockTicket.movieId.toString(),
         movieSessionId: mockTicket.movieSessionId.toString(),
@@ -98,12 +109,12 @@ describe('TicketsService', () => {
       expect(result).toBe(true);
     });
 
-    it('kullanılmış bilet için hata fırlatmalı', () => {
+    it('If used ticket, throw an error', () => {
       const usedTicket = { ...mockTicket, isUsed: true };
 
       expect(() =>
         service.validateTicket({
-          ticket: usedTicket,
+          ticket: usedTicket as any,
           userId: mockTicket.userId.toString(),
           movieId: mockTicket.movieId.toString(),
           movieSessionId: mockTicket.movieSessionId.toString(),
@@ -111,10 +122,10 @@ describe('TicketsService', () => {
       ).toThrow(Exceptions.TicketAlreadyUsed());
     });
 
-    it('yanlış kullanıcı için hata fırlatmalı', () => {
+    it('If ticket is belongs to another user, throw an error', () => {
       expect(() =>
         service.validateTicket({
-          ticket: mockTicket,
+          ticket: mockTicket as any,
           userId: new Types.ObjectId().toString(),
           movieId: mockTicket.movieId.toString(),
           movieSessionId: mockTicket.movieSessionId.toString(),
@@ -124,9 +135,9 @@ describe('TicketsService', () => {
   });
 
   describe('useTicket', () => {
-    it('başarılı bir şekilde bileti kullanmalı', async () => {
-      ticketsRepository.findById.mockResolvedValue(mockTicket);
-      ticketsRepository.useTicket.mockResolvedValue({ ...mockTicket, isUsed: true });
+    it('should use ticket successfully', async () => {
+      ticketsRepository.findById.mockResolvedValue(mockTicket as any);
+      ticketsRepository.useTicket.mockResolvedValue({ ...mockTicket, isUsed: true } as any);
 
       const result = await service.useTicket({
         movieId: mockTicket.movieId.toString(),
@@ -135,10 +146,10 @@ describe('TicketsService', () => {
         userId: mockTicket.userId.toString(),
       });
 
-      expect(result.isUsed).toBe(true);
+      expect(result?.isUsed).toBe(true);
     });
 
-    it('var olmayan bilet için hata fırlatmalı', async () => {
+    it('should throw an error if ticket is not found', async () => {
       ticketsRepository.findById.mockResolvedValue(null);
 
       await expect(

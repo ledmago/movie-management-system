@@ -103,8 +103,8 @@ describe('MoviesService', () => {
 
     it('should return available movies', async () => {
       const mockMovies = [
-        { title: 'Movie 1' },
-        { title: 'Movie 2' },
+        { name: 'Movie 1' },
+        { name: 'Movie 2' },
       ];
 
       mockMoviesRepository.getAvailableMovies.mockResolvedValue(mockMovies);
