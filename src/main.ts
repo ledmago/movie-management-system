@@ -17,7 +17,7 @@ async function bootstrap() {
       }));
       return new BadRequestException({
         statusCode: 400,
-        status: 'fail',
+        status: false,
         message: messages.map((message) => message.message).join(', '),
         errors: messages
       });

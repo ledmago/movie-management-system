@@ -16,7 +16,7 @@ import {
 
       const errorResponse = {
         statusCode: status,
-        status: 'fail',
+        status: false,
         timestamp: new Date().toISOString(),
         path: ctx.getRequest().url,
         message: exception.message,
