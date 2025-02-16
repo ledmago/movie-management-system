@@ -4,7 +4,7 @@ import { Logger, ValidationPipe, BadRequestException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/http-exeption.fitlter';
 
-const PORT = process.env.PORT ?? 3001
+const PORT = process.env.PORT ?? 80
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,6 +45,6 @@ async function bootstrap() {
   SwaggerModule.setup('documentation', app, documentFactory);
   }
 
-  await app.listen(PORT);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
