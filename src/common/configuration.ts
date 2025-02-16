@@ -1,7 +1,7 @@
 export const configuration = () => ({
   privateKey: process.env.PRIVATE_KEY || 'secretKey002',
   database: {
-    uri: process.env.DB_URL || 'mongodb://localhost:27017/adminPanel2',
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/movieapp',
     retryAttempts: 10,
   },
   rabbitmq: {
@@ -9,6 +9,6 @@ export const configuration = () => ({
   },
   redis: {
     type: 'single',
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: process.env.REDIS_URL || `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || '6379'}`,
   },
 });
