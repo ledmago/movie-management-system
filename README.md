@@ -2,6 +2,11 @@
 
 This project is a REST API for movie ticket purchasing and viewing history management.
 
+# Swagger Documentation
+
+https://movie-management-app-a899b5fdd7c1.herokuapp.com/documentation
+
+
 ## 🚀 Features
 
 - Movie and session management
